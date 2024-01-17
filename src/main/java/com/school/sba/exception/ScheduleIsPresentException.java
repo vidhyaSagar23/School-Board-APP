@@ -1,14 +1,12 @@
 package com.school.sba.exception;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Getter
-public class SchoolNotFoundException  extends RuntimeException{
-
+@NoArgsConstructor
+public class ScheduleIsPresentException extends RuntimeException {
 	private String message;
-
 }

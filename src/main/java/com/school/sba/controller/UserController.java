@@ -38,4 +38,6 @@ public class UserController {
 	public ResponseEntity<ResponseStructure<UserResponse>> findById(@PathVariable int userId){
 		return userService.findUserById(userId);
 	}
+	
+	
 }

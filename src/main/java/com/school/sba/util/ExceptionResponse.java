@@ -9,7 +9,7 @@ import lombok.Setter;
 @Component
 @Getter
 @Setter
-public class ExceptionResponce<T> {
+public class ExceptionResponse<T> {
 	private int status;
 	private String message;
 	private String rootCause;

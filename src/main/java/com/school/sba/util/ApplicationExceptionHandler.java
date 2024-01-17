@@ -18,24 +18,28 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.school.sba.exception.DuplicateEntryException;
 import com.school.sba.exception.InvalidUserException;
+import com.school.sba.exception.ScheduleIsPresentException;
+import com.school.sba.exception.SchoolAlreadyPresentForAdminException;
+import com.school.sba.exception.SchoolNotFoundException;
 import com.school.sba.exception.UserNotFoundByIdException;
 
 @RestControllerAdvice
-public class UserExceptionHandler extends ResponseEntityExceptionHandler{
-	
+public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
+
 	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-			List<ObjectError> allErrors = ex.getAllErrors();
-			Map<String, String> errors=new HashMap<>();
-			allErrors.forEach(error -> {
+		List<ObjectError> allErrors = ex.getAllErrors();
+		Map<String, String> errors=new HashMap<>();
+		allErrors.forEach(error -> {
 			FieldError fieldError=(FieldError) error;
 			errors.put(fieldError.getField(), fieldError.getDefaultMessage());
 		});
 		return errorStructure(HttpStatus.BAD_REQUEST, ex.getMessage(), errors);
 	}
-	
-	private ResponseEntity<Object> errorStructure(HttpStatus status,String message,Object rootCause){		return new ResponseEntity<Object>(Map.of("status",status.value(),
+
+	private ResponseEntity<Object> errorStructure(HttpStatus status,String message,Object rootCause){		
+		return new ResponseEntity<Object>(Map.of("status",status.value(),
 				"message",message,
 				"rootcause",rootCause),status);
 	}
@@ -54,5 +58,20 @@ public class UserExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(UserNotFoundByIdException.class)
 	public ResponseEntity<Object> handleUserNotFoundByIdException(UserNotFoundByIdException ex){
 		return errorStructure(HttpStatus.NOT_FOUND, ex.getMessage(), "User id not found");
+	}
+
+	@ExceptionHandler(ScheduleIsPresentException.class)
+	public ResponseEntity<Object> scheduleAlreadyPresentException(ScheduleIsPresentException ex){
+		return errorStructure(HttpStatus.NOT_FOUND, ex.getMessage(), "School is already scheduled");
+	}
+
+	@ExceptionHandler(SchoolAlreadyPresentForAdminException.class)
+	public ResponseEntity<Object> schoolAlreadyPresentForAdmin (SchoolAlreadyPresentForAdminException ex){
+		return errorStructure(HttpStatus.NOT_ACCEPTABLE,ex.getMessage(), "You are trying to create more than one school for a ADMIN");
+	}
+
+	@ExceptionHandler(SchoolNotFoundException.class)
+	public ResponseEntity<Object> invalidFormat(SchoolNotFoundException ex){
+		return errorStructure(HttpStatus.NOT_ACCEPTABLE,ex.getMessage(), "PLEASE ENTER PASSWORD IN A VALID SCHOOL");
 	}
 }

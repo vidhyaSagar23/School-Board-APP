@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class SchoolNotFoundException  extends RuntimeException{
-
+public class SchoolAlreadyPresentForAdminException extends RuntimeException {
 	private String message;
-
 }

@@ -1,11 +1,13 @@
-//package com.school.sba.service;
-//
-//import com.school.sba.entity.School;
-//
-//public interface SchoolService {
-//	public School saveSchool(School school);
-//	School getSchoolById(int id);
-//	School updateSchool(School school);
-//	void deleteSchoolById(int id);
-//	
-//}
+package com.school.sba.service;
+
+import org.springframework.http.ResponseEntity;
+
+import com.school.sba.requestdto.SchoolRequest;
+import com.school.sba.responsedto.SchoolResponse;
+import com.school.sba.util.ResponseStructure;
+
+public interface SchoolService{
+
+	ResponseEntity<ResponseStructure<SchoolResponse>> createSchool(SchoolRequest schoolRequest, int userId);
+
+}
