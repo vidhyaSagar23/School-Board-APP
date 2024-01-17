@@ -1,6 +1,7 @@
 package com.school.sba.serviceimpl;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.school.sba.entity.Schedule;
 import com.school.sba.entity.School;
 import com.school.sba.exception.ScheduleIsPresentException;
+import com.school.sba.exception.ScheduleNotFoundById;
 import com.school.sba.exception.SchoolNotFoundException;
 import com.school.sba.repositary.ScheduleRepo;
 import com.school.sba.repositary.SchoolRepo;
@@ -76,5 +78,75 @@ public class ScheduleServiceImpl implements ScheduleService{
 		return new ResponseEntity<ResponseStructure<ScheduleResponse>>(structure,HttpStatus.CREATED);
 	}
 
+	@Override
+	public ResponseEntity<ResponseStructure<ScheduleResponse>> findSchedule(int scheduleId) {
+		Schedule schedule=scheduleRepo.findById(scheduleId).orElseThrow(()-> new ScheduleNotFoundById("Can't find any schedule in the given ID"));
+		
+		structure.setStatus(HttpStatus.FOUND.value());
+		structure.setMessage("Schedule Found");
+		structure.setData(mapToScheduleResponse(schedule));
+		return new ResponseEntity<ResponseStructure<ScheduleResponse>>(structure,HttpStatus.FOUND);
+	}
 
+	@Override
+	public ResponseEntity<ResponseStructure<ScheduleResponse>> updateSchedule(int scheduleId, ScheduleRequest request) {
+		Schedule schedule=scheduleRepo.findById(scheduleId).orElseThrow(()-> new ScheduleNotFoundById("Can't find any schedule in the given ID"));
+	    if (Objects.nonNull(request.getOpensAt())) {
+	        schedule.setOpensAt(request.getOpensAt());
+	    }
+	    if (Objects.nonNull(request.getClosesAt())) {
+	        schedule.setClosesAt(request.getClosesAt());
+	    }
+	    if (Objects.nonNull(request.getBreakTime())) {
+	        schedule.setBreakTime(request.getBreakTime());
+	    }
+	    if (Objects.nonNull(request.getBreakLengthInMins())) {
+	        schedule.setBreakLength(Duration.ofMinutes(request.getBreakLengthInMins()));
+	    }
+	    if (Objects.nonNull(request.getClassHoursPerDay())) {
+	        schedule.setClassHoursPerDay(request.getClassHoursPerDay());
+	    }
+	    if (Objects.nonNull(request.getClassHourLengthInMins())) {
+	        schedule.setClassHourLength(Duration.ofMinutes(request.getClassHourLengthInMins()));
+	    } else {
+	        schedule.setClassHourLength(null);
+	    }
+	    if (Objects.nonNull(request.getLunchTime())) {
+	        schedule.setLunchTime(request.getLunchTime());
+	    }
+	    if (Objects.nonNull(request.getLunchLengthInMins())) {
+	        schedule.setLunchLength(Duration.ofMinutes(request.getLunchLengthInMins()));
+	    } else {
+	        schedule.setLunchLength(null);
+	    }
+//		if(request.getOpensAt() != null) {
+//			schedule.setOpensAt(request.getOpensAt());
+//		}
+//		if(request.getClosesAt() != null) {
+//			schedule.setClosesAt(request.getClosesAt());
+//		}
+//		if(request.getBreakTime() != null) {
+//			schedule.setBreakTime(request.getBreakTime());
+//		}
+//		if(request.getBreakLengthInMins()!= null) {
+//			schedule.setBreakLength(Duration.ofMinutes(request.getBreakLengthInMins()));
+//		}
+//		if(request.getClassHoursPerDay() != null) {
+//			schedule.setClassHoursPerDay(request.getClassHoursPerDay());
+//		}
+//		if(request.getClassHourLengthInMins()!= null) {
+//			schedule.setClassHourLength(Duration.ofMinutes(request.getClassHourLengthInMins()));
+//		}
+//		if(request.getLunchTime()!=null) {
+//			schedule.setLunchTime(request.getLunchTime());
+//		}
+//		if(request.getLunchLengthInMins()!= null) {
+//			schedule.setLunchLength(Duration.ofMinutes(request.getLunchLengthInMins()));
+//		}
+		scheduleRepo.save(schedule);
+		structure.setStatus(HttpStatus.ACCEPTED.value());
+		structure.setMessage("Schedule updated");
+		structure.setData(mapToScheduleResponse(schedule));
+		return new ResponseEntity<ResponseStructure<ScheduleResponse>>(structure,HttpStatus.ACCEPTED);
+	}
 }

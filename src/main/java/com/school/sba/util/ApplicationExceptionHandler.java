@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import com.school.sba.exception.DuplicateEntryException;
 import com.school.sba.exception.InvalidUserException;
 import com.school.sba.exception.ScheduleIsPresentException;
+import com.school.sba.exception.ScheduleNotFoundById;
 import com.school.sba.exception.SchoolAlreadyPresentForAdminException;
 import com.school.sba.exception.SchoolNotFoundException;
 import com.school.sba.exception.UserNotFoundByIdException;
@@ -73,5 +74,10 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(SchoolNotFoundException.class)
 	public ResponseEntity<Object> invalidFormat(SchoolNotFoundException ex){
 		return errorStructure(HttpStatus.NOT_ACCEPTABLE,ex.getMessage(), "PLEASE ENTER PASSWORD IN A VALID SCHOOL");
+	}
+	
+	@ExceptionHandler(ScheduleNotFoundById.class)
+	public ResponseEntity<Object> scheduleNotFoundByIdException(ScheduleNotFoundById ex){
+		return errorStructure(HttpStatus.NOT_FOUND,ex.getMessage(), "Schedule not found in respected id");
 	}
 }
