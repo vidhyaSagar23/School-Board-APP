@@ -42,4 +42,5 @@ public class User {
 	
 	@ManyToOne
 	private School school;
+	
 }

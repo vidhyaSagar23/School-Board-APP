@@ -1,4 +1,4 @@
-package com.school.sba.serviceimpl;
+ package com.school.sba.serviceimpl;
 
 import java.time.Duration;
 import java.util.Objects;
@@ -119,30 +119,6 @@ public class ScheduleServiceImpl implements ScheduleService{
 	    } else {
 	        schedule.setLunchLength(null);
 	    }
-//		if(request.getOpensAt() != null) {
-//			schedule.setOpensAt(request.getOpensAt());
-//		}
-//		if(request.getClosesAt() != null) {
-//			schedule.setClosesAt(request.getClosesAt());
-//		}
-//		if(request.getBreakTime() != null) {
-//			schedule.setBreakTime(request.getBreakTime());
-//		}
-//		if(request.getBreakLengthInMins()!= null) {
-//			schedule.setBreakLength(Duration.ofMinutes(request.getBreakLengthInMins()));
-//		}
-//		if(request.getClassHoursPerDay() != null) {
-//			schedule.setClassHoursPerDay(request.getClassHoursPerDay());
-//		}
-//		if(request.getClassHourLengthInMins()!= null) {
-//			schedule.setClassHourLength(Duration.ofMinutes(request.getClassHourLengthInMins()));
-//		}
-//		if(request.getLunchTime()!=null) {
-//			schedule.setLunchTime(request.getLunchTime());
-//		}
-//		if(request.getLunchLengthInMins()!= null) {
-//			schedule.setLunchLength(Duration.ofMinutes(request.getLunchLengthInMins()));
-//		}
 		scheduleRepo.save(schedule);
 		structure.setStatus(HttpStatus.ACCEPTED.value());
 		structure.setMessage("Schedule updated");
