@@ -1,5 +1,8 @@
 package com.school.sba.serviceimpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,21 +51,7 @@ public class AcademicProgramServiceImpl implements AcademicProgramService{
 
 	@Override
 	public ResponseEntity<ResponseStructure<AcademicProgramResponse>> createAcademicProgram(
-			AcademicProgramRequest request, int schoolId) {
-		
-		
-//			return schoolRepo.findById(schoolId).map(school->{
-//				AcademicProgram academicProgram=academicProgramRepo.save(mapToAcademicProgramRequest(request));
-//				school.getAcademicPrograms().add(academicProgram);
-//				System.out.println(school.getAcademicPrograms());
-//				responseStructure.setStatus(HttpStatus.CREATED.value());
-//				responseStructure.setMessage("Academic program created for school");
-//				responseStructure.setData(mapToAcademicProgramResponse(academicProgram));
-//				return new ResponseEntity<ResponseStructure<AcademicProgramResponse>>(responseStructure,HttpStatus.CREATED);
-//			}).orElseThrow(()->new SchoolNotFoundException("School not found in the given Id"));	
-		
-		
-		
+			AcademicProgramRequest request, int schoolId) {	
 		School school=schoolRepo.findById(schoolId).orElseThrow(()->new SchoolNotFoundException("School not found in the given Id"));
 		AcademicProgram academicProgram =mapToAcademicProgramRequest(request);
 		academicProgram.setSchool(school);
@@ -71,5 +60,22 @@ public class AcademicProgramServiceImpl implements AcademicProgramService{
 		responseStructure.setMessage("Academic program created for school");
 		responseStructure.setData(mapToAcademicProgramResponse(academicProgram));
 		return new ResponseEntity<ResponseStructure<AcademicProgramResponse>>(responseStructure,HttpStatus.CREATED);
+	}
+
+	@Override
+	public ResponseEntity<ResponseStructure<List<AcademicProgramResponse>>> findAllAcademicPrograms(int schoolId) {
+		return schoolRepo.findById(schoolId).map(school->{
+			List<AcademicProgram> list=school.getAcademicPrograms();
+			ResponseStructure<List<AcademicProgramResponse>> rs=new ResponseStructure<>();
+			List<AcademicProgramResponse> l=new ArrayList<>();
+			
+			for(AcademicProgram obj:list) {
+				l.add(mapToAcademicProgramResponse(obj));
+			}
+			rs.setStatus(HttpStatus.FOUND.value());
+			rs.setMessage("Academic program's found");
+			rs.setData(l);
+			return new ResponseEntity<ResponseStructure<List<AcademicProgramResponse>>>(rs,HttpStatus.FOUND);
+		}).orElseThrow(()->new SchoolNotFoundException("School not found in the given Id"));
 	}
 }
