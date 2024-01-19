@@ -10,5 +10,7 @@ public interface SubjectService {
 
 	
 	ResponseEntity<ResponseStructure<AcademicProgramResponse>> addSubject(SubjectRequest request,int programId);
+
+	ResponseEntity<ResponseStructure<AcademicProgramResponse>> updateSubject(SubjectRequest request, int programId);
 		
 }
