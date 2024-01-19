@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.school.sba.exception.AcademicProgramNotFoundById;
 import com.school.sba.exception.DuplicateEntryException;
 import com.school.sba.exception.InvalidUserException;
 import com.school.sba.exception.ScheduleIsPresentException;
@@ -68,16 +69,20 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 
 	@ExceptionHandler(SchoolAlreadyPresentForAdminException.class)
 	public ResponseEntity<Object> schoolAlreadyPresentForAdmin (SchoolAlreadyPresentForAdminException ex){
-		return errorStructure(HttpStatus.NOT_ACCEPTABLE,ex.getMessage(), "You are trying to create more than one school for a ADMIN");
+		return errorStructure(HttpStatus.BAD_REQUEST,ex.getMessage(), "You are trying to create more than one school for a ADMIN");
 	}
 
 	@ExceptionHandler(SchoolNotFoundException.class)
 	public ResponseEntity<Object> invalidFormat(SchoolNotFoundException ex){
-		return errorStructure(HttpStatus.NOT_ACCEPTABLE,ex.getMessage(), "PLEASE ENTER PASSWORD IN A VALID SCHOOL");
+		return errorStructure(HttpStatus.BAD_REQUEST,ex.getMessage(), "PLEASE ENTER PASSWORD IN A VALID SCHOOL");
 	}
 	
 	@ExceptionHandler(ScheduleNotFoundById.class)
 	public ResponseEntity<Object> scheduleNotFoundByIdException(ScheduleNotFoundById ex){
 		return errorStructure(HttpStatus.NOT_FOUND,ex.getMessage(), "Schedule not found in respected id");
+	}
+	@ExceptionHandler(AcademicProgramNotFoundById.class)
+	public ResponseEntity<Object> academicProgramNotFoundByIdException(AcademicProgramNotFoundById ex){
+		return errorStructure(HttpStatus.NOT_FOUND,ex.getMessage(), "Academic Program not found in respected id");
 	}
 }

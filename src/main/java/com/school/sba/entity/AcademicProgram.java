@@ -37,4 +37,7 @@ public class AcademicProgram {
 	
 	@ManyToOne
 	private School school;
+	
+	@ManyToMany
+	private List<Subject> subjects;
 }

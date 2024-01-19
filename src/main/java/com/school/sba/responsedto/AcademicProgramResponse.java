@@ -1,6 +1,7 @@
 package com.school.sba.responsedto;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.stereotype.Component;
 
@@ -22,4 +23,5 @@ public class AcademicProgramResponse {
 	private LocalTime beginsAt;
 	private LocalTime endsAt;
 	private ProgramType programType;
+	private List<String> subjects;
 }
