@@ -50,11 +50,11 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(InvalidUserException.class)
 	public ResponseEntity<Object> handlerForInvalidUserTypeException(InvalidUserException iue)
 	{
-		return errorStructure(HttpStatus.BAD_REQUEST, iue.getMessage(), "THIS EXCEPTION IS DUE TO THAT THE ADMIN IS ALREADY PRESENT OR YOU ARE TRYING TO CREATE TEACHER OR STUDENT.Only ADMIN CAN CREATE THEM");
+		return errorStructure(HttpStatus.BAD_REQUEST, iue.getMessage(), "Only ADMIN'S are allowed to sign in here!!");
 	}
 	@ExceptionHandler(DuplicateEntryException.class)
 	public ResponseEntity<Object> handlerForDuplicateEntryException(DuplicateEntryException dee){
-		return errorStructure(HttpStatus.BAD_REQUEST, dee.getMessage(), "THIS EXCEPTION IS DUE TO THAT THE USERNAME OR CONTACT OR EMAIL ALREADY PRESENT");
+		return errorStructure(HttpStatus.BAD_REQUEST, dee.getMessage(), "Duplicate entry is not allowed.change username and try again!!");
 
 	}
 	@ExceptionHandler(UserNotFoundByIdException.class)

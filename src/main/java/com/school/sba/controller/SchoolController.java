@@ -20,8 +20,8 @@ public class SchoolController {
 	private SchoolService schoolService;
 	
 	@PreAuthorize("hasAuthority('ADMIN')")
-	@PostMapping("/users/{userId}/schools")
-	public ResponseEntity<ResponseStructure<SchoolResponse>> createSchool(@RequestBody SchoolRequest schoolRequest,@PathVariable int userId){
-		return schoolService.createSchool(schoolRequest,userId);
+	@PostMapping("/users/schools")
+	public ResponseEntity<ResponseStructure<SchoolResponse>> createSchool(@RequestBody SchoolRequest schoolRequest){
+		return schoolService.createSchool(schoolRequest);
 	}
 }

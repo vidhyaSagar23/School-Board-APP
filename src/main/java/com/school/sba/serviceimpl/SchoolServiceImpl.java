@@ -3,6 +3,7 @@ package com.school.sba.serviceimpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.school.sba.entity.School;
@@ -51,8 +52,9 @@ public class SchoolServiceImpl implements SchoolService{
 	}
 
 	@Override
-	public ResponseEntity<ResponseStructure<SchoolResponse>> createSchool(SchoolRequest schoolRequest, int userId) {
-		User admin=userRepositary.findById(userId).orElseThrow(()-> new UserNotFoundByIdException("User Id not exist"));
+	public ResponseEntity<ResponseStructure<SchoolResponse>> createSchool(SchoolRequest schoolRequest) {
+		String userName=SecurityContextHolder.getContext().getAuthentication().getName();   // directly getting the username that has been logged in
+		User admin=userRepositary.findByUserName(userName).orElseThrow(()-> new UserNotFoundByIdException("User Id not exist"));
 		if(admin.getUserRole()!=UserRole.ADMIN) {
 			throw new InvalidUserException("only ADMIN can create school");
 		}

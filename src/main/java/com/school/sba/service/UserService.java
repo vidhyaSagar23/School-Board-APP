@@ -17,4 +17,6 @@ public interface UserService {
 
 	ResponseEntity<ResponseStructure<UserResponse>> findUserById(int userId);
 
+	ResponseEntity<ResponseStructure<UserResponse>> saveAdmin(UserRequest request);
+
 }

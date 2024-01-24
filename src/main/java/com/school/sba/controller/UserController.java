@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.school.sba.enumuration.UserRole;
 import com.school.sba.requestdto.UserRequest;
 import com.school.sba.responsedto.UserResponse;
 import com.school.sba.service.UserService;
@@ -25,7 +26,13 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@PostMapping("users/register/admin")
+	public ResponseEntity<ResponseStructure<UserResponse>> saveAdmin(@RequestBody UserRequest request){
+		return userService.saveAdmin(request);
+	}
+	
 	@PostMapping("users/register")
+	@PreAuthorize("hasAuthority('ADMIN')")
 	public ResponseEntity<ResponseStructure<UserResponse>> saveUser(@RequestBody @Valid UserRequest userRequest) {
 		return userService.saveUser(userRequest);
 	}

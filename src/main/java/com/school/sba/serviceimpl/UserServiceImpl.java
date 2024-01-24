@@ -27,10 +27,10 @@ public class UserServiceImpl implements UserService{
 	private UserRepositary userRepo;
 	@Autowired
 	private ResponseStructure<UserResponse> responceStructure;
-	
+
 	@Autowired
 	private PasswordEncoder encoder;
-	
+
 	private UserResponse mapToUserResponce(User user) {
 		return new UserResponse().builder()
 				.userId(user.getUserId())
@@ -40,8 +40,8 @@ public class UserServiceImpl implements UserService{
 				.userEmail(user.getUserEmail())
 				.userRole(user.getUserRole())
 				.userContactNo(user.getUserContactNo()).build();
-		
-		 
+
+
 	}
 	private User mapToUser(UserRequest userRequest) {
 		return new User().builder().
@@ -54,52 +54,61 @@ public class UserServiceImpl implements UserService{
 				.userRole(userRequest.getUserRole())
 				.build();
 	}
-	
+
+
 	@Override
-	public ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequest userRequest) {
-	if(userRequest.getUserRole()==UserRole.ADMIN) 
-	{
-		if(admin==false)
-	{
-			
-	 admin=true;
-	if(userRepo.existsByUserRole(userRequest.getUserRole())==false)
-		{	
-		User user = userRepo.save(mapToUser(userRequest));
-		responceStructure.setStatus(HttpStatus.CREATED.value());
-		responceStructure.setMessage("Admin Created");
-		responceStructure.setData(mapToUserResponce(user));		
-	}
-	else {
-		throw new DuplicateEntryException("Admin Already Exist");
-	 }
-	}
-	else {
-		throw new InvalidUserException("Change UserName or Email and try again");
+	public ResponseEntity<ResponseStructure<UserResponse>> saveAdmin(UserRequest request) {
+		if(request.getUserRole()==UserRole.ADMIN) {
+
+			if(userRepo.existsByUserRole(request.getUserRole())==false) {
+				User user = userRepo.save(mapToUser(request));
+				responceStructure.setStatus(HttpStatus.CREATED.value());
+				responceStructure.setMessage("Admin Created");
+				responceStructure.setData(mapToUserResponce(user));
+				return new ResponseEntity<ResponseStructure<UserResponse>>(responceStructure,HttpStatus.CREATED);
+
+			}
+			else {
+				throw new DuplicateEntryException("Admin Already Exist");
+			}
+		}
+		else {
+			throw new InvalidUserException("Invalid User!!");			
 		}
 	}
-	else {
+
+	@Override
+	public ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequest userRequest) {
+		if(userRequest.getUserRole()!=UserRole.ADMIN) 
+		{	try {
 			User user = userRepo.save(mapToUser(userRequest));
 			responceStructure.setStatus(HttpStatus.CREATED.value());
-			responceStructure.setMessage("User Created");
+			responceStructure.setMessage("Admin Created");
 			responceStructure.setData(mapToUserResponce(user));	
+			return new ResponseEntity<ResponseStructure<UserResponse>>(responceStructure,HttpStatus.CREATED);
+		}
+		catch(Exception e) {
+			throw new DuplicateEntryException("User already present in same name");
+		}
+		}
+		else {
+			throw new DuplicateEntryException("Admin Already present");
+		}
 	}
-	return new ResponseEntity<ResponseStructure<UserResponse>>(responceStructure,HttpStatus.CREATED);
-	}
-	
+
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponse>> deleteUser(int userId) {
 		User user=userRepo.findById(userId).orElseThrow(()-> new UserNotFoundByIdException("User Id not exist"));
 		user.setDeleted(true);
 		userRepo.save(user);
-		
+
 		responceStructure.setStatus(HttpStatus.OK.value());
 		responceStructure.setMessage("User data deleted");
 		responceStructure.setData(mapToUserResponce(user));
-	
+
 		return new ResponseEntity<ResponseStructure<UserResponse>>(responceStructure,HttpStatus.OK);
 	}
-	
+
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponse>> findUserById(int userId) {
 		User user=userRepo.findById(userId).orElseThrow(()-> new UserNotFoundByIdException("User Id not exist"));
@@ -108,4 +117,5 @@ public class UserServiceImpl implements UserService{
 		responceStructure.setData(mapToUserResponce(user));
 		return new ResponseEntity<ResponseStructure<UserResponse>>(responceStructure,HttpStatus.OK);
 	}
+
 }
