@@ -68,12 +68,12 @@
     <optional>true</optional>
 </dependency>
 
-<!--7. Used for spring security
+<!--7. Used for spring security -->
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-security</artifactId>
 </dependency>
- -->
+
 <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
 <!-- for validation purpose-->
 <dependency>

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.school.sba.entity.User;
@@ -17,6 +18,8 @@ import com.school.sba.responsedto.UserResponse;
 import com.school.sba.service.UserService;
 import com.school.sba.util.ResponseStructure;
 
+import jakarta.validation.Valid;
+
 @Service
 public class UserServiceImpl implements UserService{
 	static boolean admin=false;
@@ -25,6 +28,8 @@ public class UserServiceImpl implements UserService{
 	@Autowired
 	private ResponseStructure<UserResponse> responceStructure;
 	
+	@Autowired
+	private PasswordEncoder encoder;
 	
 	private UserResponse mapToUserResponce(User user) {
 		return new UserResponse().builder()
@@ -43,7 +48,7 @@ public class UserServiceImpl implements UserService{
 				userName(userRequest.getUserName()).
 				userFirstName(userRequest.getUserFirstName()).
 				userLastName(userRequest.getUserLastName())
-				.userPassword(userRequest.getUserPassword()).
+				.userPassword(encoder.encode(userRequest.getUserPassword())).
 				userContactNo(userRequest.getUserContactNo())
 				.userEmail(userRequest.getUserEmail())
 				.userRole(userRequest.getUserRole())
@@ -52,37 +57,34 @@ public class UserServiceImpl implements UserService{
 	
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponse>> saveUser(UserRequest userRequest) {
-		if(userRequest.getUserRole()==UserRole.ADMIN)
-		{
-			if(admin==false)
-			{
-				admin=true;
-					try {
-						User user = userRepo.save(mapToUser(userRequest));
-						 responceStructure.setData(mapToUserResponce(user));
-						 responceStructure.setMessage("User Saved Successfully");
-						 responceStructure.setStatus(HttpStatus.CREATED.value());
-					} catch (Exception e) {
-						e.printStackTrace();
-						throw new DuplicateEntryException("Change UserName And Email and try again");
-					}
-			}
-			else
-			{
-				throw new InvalidUserException("Admin can be only one Person");
-			}
+	if(userRequest.getUserRole()==UserRole.ADMIN) 
+	{
+		if(admin==false)
+	{
+			
+	 admin=true;
+	if(userRepo.existsByUserRole(userRequest.getUserRole())==false)
+		{	
+		User user = userRepo.save(mapToUser(userRequest));
+		responceStructure.setStatus(HttpStatus.CREATED.value());
+		responceStructure.setMessage("Admin Created");
+		responceStructure.setData(mapToUserResponce(user));		
+	}
+	else {
+		throw new DuplicateEntryException("Admin Already Exist");
+	 }
+	}
+	else {
+		throw new InvalidUserException("Change UserName or Email and try again");
 		}
-		else {
-				try {
-					User user = userRepo.save(mapToUser(userRequest));
-					 responceStructure.setData(mapToUserResponce(user));
-					 responceStructure.setMessage("User Saved Successfully");
-					 responceStructure.setStatus(HttpStatus.CREATED.value());
-				} catch (Exception e) {
-					throw new DuplicateEntryException("Change UserName And Email and try again");
-				}	
-		}
-		return new ResponseEntity<ResponseStructure<UserResponse>>(responceStructure,HttpStatus.CREATED);
+	}
+	else {
+			User user = userRepo.save(mapToUser(userRequest));
+			responceStructure.setStatus(HttpStatus.CREATED.value());
+			responceStructure.setMessage("User Created");
+			responceStructure.setData(mapToUserResponce(user));	
+	}
+	return new ResponseEntity<ResponseStructure<UserResponse>>(responceStructure,HttpStatus.CREATED);
 	}
 	
 	@Override
@@ -97,6 +99,7 @@ public class UserServiceImpl implements UserService{
 	
 		return new ResponseEntity<ResponseStructure<UserResponse>>(responceStructure,HttpStatus.OK);
 	}
+	
 	@Override
 	public ResponseEntity<ResponseStructure<UserResponse>> findUserById(int userId) {
 		User user=userRepo.findById(userId).orElseThrow(()-> new UserNotFoundByIdException("User Id not exist"));
@@ -105,5 +108,4 @@ public class UserServiceImpl implements UserService{
 		responceStructure.setData(mapToUserResponce(user));
 		return new ResponseEntity<ResponseStructure<UserResponse>>(responceStructure,HttpStatus.OK);
 	}
-
 }

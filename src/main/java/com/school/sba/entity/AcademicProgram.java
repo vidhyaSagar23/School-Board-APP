@@ -40,4 +40,7 @@ public class AcademicProgram {
 	
 	@ManyToMany
 	private List<Subject> subjects;
+	
+	@ManyToMany(mappedBy = "academicProgram")
+	private List<User> users=new ArrayList<>();
 }

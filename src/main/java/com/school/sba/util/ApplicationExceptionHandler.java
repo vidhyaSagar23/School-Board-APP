@@ -17,6 +17,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import com.school.sba.exception.AcademicProgramNotFoundById;
+import com.school.sba.exception.AdminCannotBeAssignedToAcademicException;
 import com.school.sba.exception.DuplicateEntryException;
 import com.school.sba.exception.InvalidUserException;
 import com.school.sba.exception.ScheduleIsPresentException;
@@ -49,8 +50,7 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(InvalidUserException.class)
 	public ResponseEntity<Object> handlerForInvalidUserTypeException(InvalidUserException iue)
 	{
-		return errorStructure(HttpStatus.BAD_REQUEST, iue.getMessage(), "THIS EXCEPTION IS DUE TO THAT THE ADMIN IS ALREADY PRESENT");
-
+		return errorStructure(HttpStatus.BAD_REQUEST, iue.getMessage(), "THIS EXCEPTION IS DUE TO THAT THE ADMIN IS ALREADY PRESENT OR YOU ARE TRYING TO CREATE TEACHER OR STUDENT.Only ADMIN CAN CREATE THEM");
 	}
 	@ExceptionHandler(DuplicateEntryException.class)
 	public ResponseEntity<Object> handlerForDuplicateEntryException(DuplicateEntryException dee){
@@ -84,5 +84,9 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler{
 	@ExceptionHandler(AcademicProgramNotFoundById.class)
 	public ResponseEntity<Object> academicProgramNotFoundByIdException(AcademicProgramNotFoundById ex){
 		return errorStructure(HttpStatus.NOT_FOUND,ex.getMessage(), "Academic Program not found in respected id");
+	}
+	@ExceptionHandler(AdminCannotBeAssignedToAcademicException.class)
+	public ResponseEntity<Object> AdminCannotBeAssignedToAcademic(AdminCannotBeAssignedToAcademicException ex){
+		return errorStructure(HttpStatus.BAD_REQUEST,ex.getMessage(), "Admin cannot be added to any academic program.only students and teachers can be assigned");
 	}
 }

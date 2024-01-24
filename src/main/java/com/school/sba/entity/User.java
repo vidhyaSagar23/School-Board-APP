@@ -1,5 +1,8 @@
 package com.school.sba.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.school.sba.enumuration.UserRole;
@@ -9,6 +12,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -42,5 +46,8 @@ public class User {
 	
 	@ManyToOne
 	private School school;
+	
+	@ManyToMany
+	private List<AcademicProgram> academicProgram=new ArrayList<>();
 	
 }
